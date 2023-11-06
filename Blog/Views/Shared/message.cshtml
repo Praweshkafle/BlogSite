@@ -1,0 +1,30 @@
+﻿@{
+    if (TempData["message"] != null)
+    {
+        Blog.Helpers.Alert? alert = Newtonsoft.Json.JsonConvert.DeserializeObject<Blog.Helpers.Alert>(TempData["message"].ToString());
+        if (alert.message_type == Blog.Helpers.messageType.success)
+        {
+            <div class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <i class="mdi mdi-check-all"></i>
+                <strong>@alert.message</strong>
+            </div>
+            <br />
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">
+                <button type="button" class="close" data-dismiss="alert"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <i class="mdi mdi-block-helper"></i>
+                <strong>@alert.message</strong>
+            </div>
+            <br />
+        }
+    };
+}
