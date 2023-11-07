@@ -1,5 +1,6 @@
 ﻿using Blog.Services.Repository.Implementation;
 using Blog.Services.Repository.Interface;
+using Core.Common.FileManager;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace Blog.Services
 
         private static void registerRepositories(IServiceCollection services)
         {
+            services.AddScoped<IFileManager, FileManager>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBlogPostRepository, BlogPostRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();

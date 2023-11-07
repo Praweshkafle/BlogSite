@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Services.Repository.Interface
 {
-    public interface IBlogPostRepository:IBaseRepository<BlogPostDto>
+    public interface IBlogPostRepository:IBaseRepository<BlogPost>
     {
     }
 }
