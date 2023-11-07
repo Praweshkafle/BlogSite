@@ -16,6 +16,7 @@ namespace Blog.Entities
 
         [Required]
         public string Content { get; set; }
+        public string Image { get; set; }
 
         public DateTime PublicationDate { get; set; }
 

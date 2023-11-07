@@ -1,14 +1,34 @@
-﻿  <!-- Page Header-->
-  <style>
+﻿@using Blog.Entities;
+@model BlogPost
+
+  <!-- Page Header-->
+<style>
     .ck-editor__editable[role="textbox"] {
         /* editing area */
-        min-height: 400px;
+        min-height: 320px;
+        border: none;
+        box-shadow: none;
     }
 
-    .bootstrap-select .btn:focus {
-        outline: none !important;
+        .ck-editor__editable[role="textbox"]:focus {
+            /* editing area */
+            box-shadow: none;
+        }
+
+    .ck.ck-editor {
+        /* editing area */
+        border: none;
+        box-shadow: none;
     }
-  </style>
+
+    .item {
+        display: inline-block;
+    }
+
+    .ck-toolbar {
+        border: none;
+    }
+</style>
 <header class="masthead" style="background-image: url('assets/img/home-bg.jpg'); height:100px">
     <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
@@ -30,19 +50,28 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <input type="text" style="border:none; font-size:2.25rem; font-weight:bold;" class="form-control post-title" placeholder="New post title here..." id="recipient-name">
+            <div class="modal-body m-3">
+                <form method="post" action="">
+                    <div class="form-group" style="white-space:nowrap">
+                        @Html.TextBoxFor(a => a.Image, new { @id="fileInput", @required="required",@type="file",@style="display:none;" ,@accept="image/*"})
+                        <button id="openFileButton" class="btn btn-outline-dark btn-sm mb-3 item">Add a cover image</button>
+                        <button id="change" class="btn btn-outline-secondary btn-sm mb-3 item" style="display:none;">Change</button>
+                        <button id="delete" class="btn btn-outline-danger btn-sm mb-3 item" style="display:none;">Delete</button>
+                        <img id="selectedImage" class="item" style="display:none;  height:150px; width:120px;" src="" alt="Selected Image">
                     </div>
                     <div class="form-group">
-                        <textarea class="form-control" style="height:200px" id="description"></textarea>
+                        @Html.TextBoxFor(a => a.Title, 
+                                    new { @class = "form-control shadow-none post-title", 
+                                    @required="required",@placeholder="New post title here...",
+                        @style="border:none; font-size:2.25rem; font-weight:bold;"})
+                    </div>
+                    <div class="form-group">
+                        @Html.TextAreaFor(a=> a.Content,new {@class="form-control",@id="description"})
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Post</button>
+            <div class="modal-footer border-0">
+                <button type="submit" class="btn btn-dark">Post</button>
             </div>
         </div>
     </div>>
@@ -121,5 +150,45 @@
             .catch(error => {
                 console.error(error);
             });
+
+        const fileInput = document.getElementById('fileInput');
+        const openFileButton = document.getElementById('openFileButton');
+        const selectedImage = document.getElementById('selectedImage');
+        const changeButton = document.getElementById('change');
+        const deleteButton = document.getElementById('delete');
+        const reader = new FileReader();
+        openFileButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+
+            if (file) {
+                reader.onload = (event) => {
+                    selectedImage.src = event.target.result;
+                    selectedImage.style.display = 'block';
+                    openFileButton.style.display = 'none';
+                    changeButton.style.display = 'inline-block';
+                    deleteButton.style.display = 'inline-block';
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                selectedImage.src = '';
+            }
+        });
+        changeButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        deleteButton.addEventListener('click', () => {
+            selectedImage.src = '';
+            fileInput.value='';
+            selectedImage.style.display = 'none';
+            openFileButton.style.display = 'block';
+            changeButton.style.display = 'none';
+            deleteButton.style.display = 'none';
+        });
     </script>
 }
