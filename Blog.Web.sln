@@ -4,20 +4,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog", "Blog\Blog.csproj", "{497C5980-3774-4DD8-9C1F-2B2A56788272}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E5AE846-1AAD-403E-A7F4-57FB6BAE0491} = {9E5AE846-1AAD-403E-A7F4-57FB6BAE0491}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{CF5E1BF7-33E1-4DB0-8E52-4A2C3C0A56E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Library", "Core.Library\Core.Library.csproj", "{A436A973-A173-4607-B15A-7C32106B79DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Library", "Core.Library\Core.Library.csproj", "{A436A973-A173-4607-B15A-7C32106B79DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Context", "Core.Context\Core.Context.csproj", "{8F4E7393-6F20-4CF8-8DC7-ABFD8BE6B3E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Context", "Core.Context\Core.Context.csproj", "{8F4E7393-6F20-4CF8-8DC7-ABFD8BE6B3E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Common", "Core.Common\Core.Common.csproj", "{9E5AE846-1AAD-403E-A7F4-57FB6BAE0491}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Common", "Core.Common\Core.Common.csproj", "{9E5AE846-1AAD-403E-A7F4-57FB6BAE0491}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module", "Module", "{65332D9C-835F-4E41-8E8C-F11B3720D81A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Entities", "Blog.Entities\Blog.Entities.csproj", "{E661501C-32F6-4F9C-ADF9-B2DD1A42F285}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Entities", "Blog.Entities\Blog.Entities.csproj", "{E661501C-32F6-4F9C-ADF9-B2DD1A42F285}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog.Services", "Blog.Services\Blog.Services.csproj", "{08F8C92B-D77E-440D-A1E0-120183CC64DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blog.Services", "Blog.Services\Blog.Services.csproj", "{08F8C92B-D77E-440D-A1E0-120183CC64DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

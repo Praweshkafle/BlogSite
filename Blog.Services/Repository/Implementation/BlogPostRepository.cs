@@ -36,9 +36,15 @@ namespace Blog.Services.Repository.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<BlogPost>> GetAllAsync()
+        public async Task<IEnumerable<BlogPost>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var sql = "SELECT * FROM BlogPosts";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<BlogPost>(sql);
+                return result.ToList();
+            }
         }
 
         public Task<BlogPost> GetByIdAsync(int id)

@@ -1,7 +1,7 @@
-﻿@using Blog.Entities;
-@model BlogPost
+﻿@using global::Blog.ViewModels;
+@model List<BlogModal>
 
-  <!-- Page Header-->
+<!-- Page Header-->
 <style>
     .ck-editor__editable[role="textbox"] {
         /* editing area */
@@ -51,31 +51,28 @@
                 </button>
             </div>
             <div class="modal-body m-3">
-                <form method="post" action="">
+                @Html.Partial("message")
+                <form id="postForm">
                     <div class="form-group" style="white-space:nowrap">
-                        @Html.TextBoxFor(a => a.Image, new { @id="fileInput", @required="required",@type="file",@style="display:none;" ,@accept="image/*"})
-                        <button id="openFileButton" class="btn btn-outline-dark btn-sm mb-3 item">Add a cover image</button>
-                        <button id="change" class="btn btn-outline-secondary btn-sm mb-3 item" style="display:none;">Change</button>
-                        <button id="delete" class="btn btn-outline-danger btn-sm mb-3 item" style="display:none;">Delete</button>
+                        <input id="file" name="file" type="file" style="display:none" accept="image/*" />
+                        <button id="openFileButton" type="button" class="btn btn-outline-dark btn-sm mb-3 item">Add a cover image</button>
+                        <button id="change" type="button" class="btn btn-outline-secondary btn-sm mb-3 item" style="display:none;">Change</button>
+                        <button id="delete" type="button" class="btn btn-outline-danger btn-sm mb-3 item" style="display:none;">Delete</button>
                         <img id="selectedImage" class="item" style="display:none;  height:150px; width:120px;" src="" alt="Selected Image">
                     </div>
                     <div class="form-group">
-                        @Html.TextBoxFor(a => a.Title, 
-                                    new { @class = "form-control shadow-none post-title", 
-                                    @required="required",@placeholder="New post title here...",
-                        @style="border:none; font-size:2.25rem; font-weight:bold;"})
+                        <input id="Title" class="form-control shadow-none post-title" placeholder="New post title here..." style="border:none; font-size:2.25rem; font-weight:bold" required />
                     </div>
                     <div class="form-group">
-                        @Html.TextAreaFor(a=> a.Content,new {@class="form-control",@id="description"})
+                        <textarea class="form-control" id="Content"></textarea>
                     </div>
+                    <button id="submitBtn" class="btn btn-dark">Post</button>
                 </form>
             </div>
             <div class="modal-footer border-0">
-                <button type="submit" class="btn btn-dark">Post</button>
             </div>
         </div>
-    </div>>
-</div>
+    </div>
 </div>
 
 <!-- Main Content-->
@@ -83,59 +80,34 @@
     <div class="row gx-4 gx-lg-5 justify-content-center">
         <div class="col-md-10 col-lg-8 col-xl-7">
 
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>
-                    <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on September 24, 2023
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html"><h2 class="post-title">I believe every human has a finite number of heartbeats. I don't intend to waste any of mine.</h2></a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on September 18, 2023
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Science has not yet mastered prophecy</h2>
-                    <h3 class="post-subtitle">We predict too much for the next year and yet far too little for the next ten.</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on August 24, 2023
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
-            <!-- Post preview-->
-            <div class="post-preview">
-                <a href="post.html">
-                    <h2 class="post-title">Failure is not an option</h2>
-                    <h3 class="post-subtitle">Many say exploration is part of our destiny, but it’s actually our duty to future generations.</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#!">Start Bootstrap</a>
-                    on July 8, 2023
-                </p>
-            </div>
-            <!-- Divider-->
-            <hr class="my-4" />
+            @{
+                foreach (var item in Model)
+                {
+                    <!-- Post preview-->
+                    <div class="post-preview">
+                        <a href="/blog/detail/@item.Id">
+                            <h2 class="post-title">@item.Title</h2>
+                            @if (@item.Content.Length < 30)
+                            {
+                                <h3 class="post-subtitle">@Html.Raw(@item.Content)</h3>
+                            }
+                            else
+                            {
+                                <h3 class="post-subtitle">@item.Content.Substring(0,31)</h3>
+                            }
+                        </a>
+                        <p class="post-meta">
+                            Posted by
+                            <a href="#!">@item.AuthorName</a>
+                            on @item.PublicationDate.ToString("m");
+                        </p>
+                    </div>
+                    <!-- Divider-->
+                    <hr class="my-4" />
+                }
+            }
+
+
             <!-- Pager-->
             <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
         </div>
@@ -144,14 +116,36 @@
 
 </div>
 @section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        ClassicEditor
-            .create(document.querySelector('#description'))
+        //window.onload=function(){
+        //    if (typeof ClassicEditor !== 'undefined') {
+        //        var editorData;
+        //        ClassicEditor
+        //            .create(document.querySelector('#Content'), {
+        //                toolbar: {
+        //                    items: [
+        //                        'heading',
+        //                        '|',
+        //                        'bold',
+        //                        'italic'
+        //                    ],
+        //                    shouldNotGroupWhenFull: true
+        //                }
+        //            }).then(editor => {
+        //                editorData = editor;
+        //            })
+        //            .catch(error => {
+        //            });
+        //    }
+        //}
+        var editor = ClassicEditor
+            .create(document.querySelector('#Content'))
             .catch(error => {
                 console.error(error);
             });
 
-        const fileInput = document.getElementById('fileInput');
+        const fileInput = document.getElementById('file');
         const openFileButton = document.getElementById('openFileButton');
         const selectedImage = document.getElementById('selectedImage');
         const changeButton = document.getElementById('change');
@@ -184,11 +178,54 @@
 
         deleteButton.addEventListener('click', () => {
             selectedImage.src = '';
-            fileInput.value='';
+            fileInput.value = '';
             selectedImage.style.display = 'none';
             openFileButton.style.display = 'block';
             changeButton.style.display = 'none';
             deleteButton.style.display = 'none';
         });
+
+        function submitBlogPost() {
+            var data = {
+                Title: $('#Title').val(),
+                Content: $('#Content').val(),
+                Image: '',
+                PublicationDate: "2023-11-07 14:35:25.697",
+                AuthorId: 0
+            };
+
+            var formData = new FormData();
+
+            formData.append("blogPostDto", JSON.stringify(data));
+            formData.append("file", $("#file")[0].files[0]);
+
+            $.ajax({
+                url: "/blog/create",
+                type: "POST",
+                processData: false,  // Don't process the data
+                contentType: false,  // Don't set content type
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Error: An error occurred while making the request.");
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#submitBtn").click(function (e) {
+                e.preventDefault();
+                //submitBlogPost();
+                console.log($("#Content").val());
+            });
+        });
+
     </script>
 }
