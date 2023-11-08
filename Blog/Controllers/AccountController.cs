@@ -11,14 +11,14 @@ namespace Blog.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserRepository _userRepository; 
+        private readonly IUserRepository _userRepository;
         public AccountController(IUserRepository userRepository)
         {
             this._userRepository = userRepository;
         }
         [Route("login")]
         [HttpGet]
-        public IActionResult login()
+        public async Task<IActionResult> login()
         {
             return View();
         }
@@ -32,7 +32,7 @@ namespace Blog.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await ValidateUser(loginDto.Username, loginDto.Password);
-                    if (result==null)
+                    if (result == null)
                     {
                         throw new Exception("Username and Password didnot matched.");
                     }
@@ -81,7 +81,7 @@ namespace Blog.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await IsDuplicate(userDto.Username, userDto.Email);
-                    if(result == null)
+                    if (result == null)
                     {
                         throw new Exception("Please choose different username and email.");
                     }
@@ -92,7 +92,7 @@ namespace Blog.Controllers
                         ProfilePicture = userDto.ProfilePicture,
                         Username = userDto.Username,
                     };
-                    var add= await _userRepository.AddAsync(user);
+                    var add = await _userRepository.AddAsync(user);
                     return Redirect("/login");
                 }
             }
@@ -105,8 +105,8 @@ namespace Blog.Controllers
 
         async Task<User> IsDuplicate(string username, string email)
         {
-            var user= await _userRepository.GetByUsernameAsync(username);
-            if(user.Username==username || user.Email == email)
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user.Username == username || user.Email == email)
             {
                 return null;
             }
@@ -115,8 +115,8 @@ namespace Blog.Controllers
 
         async Task<User> ValidateUser(string username, string password)
         {
-            var user= await _userRepository.GetByUsernameAsync(username);
-            if(user == null)
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null)
             {
                 return null;
             }

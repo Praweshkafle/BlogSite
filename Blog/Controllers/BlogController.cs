@@ -1,0 +1,69 @@
+﻿using Blog.Entities;
+using Blog.Helpers;
+using Blog.Services.Dto;
+using Blog.Services.Repository.Interface;
+using Core.Common.FileManager;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+
+namespace Blog.Controllers
+{
+    [Authorize]
+    [Route("blog")]
+    public class BlogController : BaseController
+    {
+        private readonly IBlogPostRepository _blogPostRepository;
+        private readonly IFileManager _fileManager;
+        public BlogController(IBlogPostRepository blogPostRepository, IFileManager fileManager)
+        {
+            _blogPostRepository = blogPostRepository;
+            _fileManager = fileManager;
+        }
+
+        [Route("create")]
+        [HttpPost]
+        public async Task<IActionResult> create(string blogPostDto, IFormFile file)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(blogPostDto))
+                {
+                    string imagePath = "";
+                    
+                    var blogPost= JsonConvert.DeserializeObject<BlogPostDto>(blogPostDto);
+                    if (file != null)
+                    {
+                        var prefix = blogPost.Title;
+                        imagePath = _fileManager.saveImageAndGetFileName(file, prefix);
+                    }
+                    var blog = new BlogPost
+                    {
+                        PublicationDate =DateTime.Now,
+                        AuthorId = getLoggedInUserId(),
+                        Content = blogPost.Content,
+                        Title = blogPost.Title,
+                        Image = imagePath,
+                    };
+                    var result = await _blogPostRepository.AddAsync(blog);
+                    AlertHelper.setMessage(this, "Post Added Successfully!!!", messageType.success);
+                    return Json(new { success = true, message = "Post Added Successfully!!!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertHelper.setMessage(this, ex.Message, messageType.error);
+                throw;
+            }
+            return Json(new { success = true, message = "Failed To Post!" });
+        }
+
+
+        [Route("detail/{Id}")]
+        [HttpGet]
+        public async Task<IActionResult> detail(int Id)
+        {
+            return View();
+        }
+    }
+}
