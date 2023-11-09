@@ -22,7 +22,7 @@ namespace Blog.Services.Repository.Implementation
         }
         public async Task<int> AddAsync(BlogPost entity)
         {
-            var sql = "Insert into BlogPosts (Title,Content,PublicationDate,AuthorId) VALUES (@Title,@Content,@PublicationDate,@AuthorId)";
+            var sql = "Insert into BlogPosts (Title,Content,PublicationDate,AuthorId,Image) VALUES (@Title,@Content,@PublicationDate,@AuthorId,@Image)";
             using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
@@ -47,9 +47,15 @@ namespace Blog.Services.Repository.Implementation
             }
         }
 
-        public Task<BlogPost> GetByIdAsync(int id)
+        public async Task<BlogPost> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var sql = "SELECT * FROM BlogPosts WHERE Id = @Id";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QuerySingleOrDefaultAsync<BlogPost>(sql, new { Id = id });
+                return result;
+            }
         }
 
         public Task<int> UpdateAsync(BlogPost entity)

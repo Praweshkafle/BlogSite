@@ -81,7 +81,7 @@ namespace Blog.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await IsDuplicate(userDto.Username, userDto.Email);
-                    if (result == null)
+                    if (result != null)
                     {
                         throw new Exception("Please choose different username and email.");
                     }
@@ -106,7 +106,8 @@ namespace Blog.Controllers
         async Task<User> IsDuplicate(string username, string email)
         {
             var user = await _userRepository.GetByUsernameAsync(username);
-            if (user.Username == username || user.Email == email)
+            if (user == null) return null;
+            if (user?.Username == username || user?.Email == email)
             {
                 return null;
             }

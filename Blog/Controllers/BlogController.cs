@@ -2,6 +2,7 @@
 using Blog.Helpers;
 using Blog.Services.Dto;
 using Blog.Services.Repository.Interface;
+using Blog.ViewModels;
 using Core.Common.FileManager;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,13 @@ namespace Blog.Controllers
     {
         private readonly IBlogPostRepository _blogPostRepository;
         private readonly IFileManager _fileManager;
-        public BlogController(IBlogPostRepository blogPostRepository, IFileManager fileManager)
+        private readonly IUserRepository _userRepository;
+
+        public BlogController(IBlogPostRepository blogPostRepository, IFileManager fileManager, IUserRepository userRepository)
         {
             _blogPostRepository = blogPostRepository;
             _fileManager = fileManager;
+            this._userRepository = userRepository;
         }
 
         [Route("create")]
@@ -30,8 +34,8 @@ namespace Blog.Controllers
                 if (!string.IsNullOrWhiteSpace(blogPostDto))
                 {
                     string imagePath = "";
-                    
-                    var blogPost= JsonConvert.DeserializeObject<BlogPostDto>(blogPostDto);
+
+                    var blogPost = JsonConvert.DeserializeObject<BlogPostDto>(blogPostDto);
                     if (file != null)
                     {
                         var prefix = blogPost.Title;
@@ -39,7 +43,7 @@ namespace Blog.Controllers
                     }
                     var blog = new BlogPost
                     {
-                        PublicationDate =DateTime.Now,
+                        PublicationDate = DateTime.Now,
                         AuthorId = getLoggedInUserId(),
                         Content = blogPost.Content,
                         Title = blogPost.Title,
@@ -63,6 +67,28 @@ namespace Blog.Controllers
         [HttpGet]
         public async Task<IActionResult> detail(int Id)
         {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(getLoggedInUserId());
+                var blogDetail = await _blogPostRepository.GetByIdAsync(Id);
+                var blogModal = new BlogModal
+                {
+                    PublicationDate = blogDetail.PublicationDate,
+                    AuthorName = user.Username,
+                    Content = blogDetail.Content,
+                    Id = Id,
+                    Title = blogDetail.Title,
+                    Image = blogDetail.Image,
+                };
+                if (blogModal != null)
+                {
+                    return View(blogModal);
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertHelper.setMessage(this, ex.Message, messageType.error);
+            }
             return View();
         }
     }

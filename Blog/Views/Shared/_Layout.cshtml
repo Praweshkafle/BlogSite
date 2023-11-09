@@ -50,10 +50,43 @@
 </style>
 
 <body>
+    <div class="modal fade bd-example-modal-lg" id="examplemodal" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Post</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body m-3">
+                    @Html.Partial("message")
+                    <form id="postForm">
+                        <div class="form-group" style="white-space:nowrap">
+                            <input id="file" name="file" type="file" style="display:none" accept="image/*" />
+                            <button id="openFileButton" type="button" class="btn btn-outline-dark btn-sm mb-3 item">Add a cover image</button>
+                            <button id="change" type="button" class="btn btn-outline-secondary btn-sm mb-3 item" style="display:none;">Change</button>
+                            <button id="delete" type="button" class="btn btn-outline-danger btn-sm mb-3 item" style="display:none;">Delete</button>
+                            <img id="selectedImage" class="item" style="display:none;  height:150px; width:120px;" src="" alt="Selected Image">
+                        </div>
+                        <div class="form-group">
+                            <input id="Title" class="form-control shadow-none post-title" placeholder="New post title here..." style="border:none; font-size:2.25rem; font-weight:bold" required />
+                        </div>
+                        <div class="form-group">
+                            <textarea id="Content"></textarea>
+                        </div>
+                        <button id="submitBtn" class="btn btn-dark">Post</button>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
         <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="index.html">Epic Blogs</a>
+            <a class="navbar-brand" href="/">Epic Blogs</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 Menu
                 <i class="fas fa-bars"></i>
@@ -131,7 +164,7 @@
             </div>
         </div>
     </footer>
-  
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="~/js/scripts.js"></script>
@@ -140,7 +173,8 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="~/js/ckeditor/ckeditor.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+    <script src="~/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+   
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

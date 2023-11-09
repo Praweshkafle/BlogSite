@@ -11,6 +11,7 @@
         public DateTime PublicationDate { get; set; } = DateTime.Now;
 
         public string AuthorName { get; set; }
+        public string Image { get; set; } = "";
 
     }
 }

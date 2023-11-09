@@ -1,5 +1,47 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Blog.ViewModels;
+@model BlogModal
+
+
 @{
+    string image ;
+    if (string.IsNullOrWhiteSpace(Model.Image))
+    {
+        image = "/assets/img/post-bg.jpg";
+    }
+    else
+    {
+        image = "/Images/Custom/" + @Model.Image;
+    }
+}
+
+  <!-- Page Header-->
+<header class="masthead" style="background-image: url('@image')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="post-heading">
+                    <h1>@Model.Title</h1>
+                    <span class="meta">
+                        Posted by
+                        <a href="#!">@Model.AuthorName</a>
+                        on @Model.PublicationDate
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Post Content-->
+<article class="mb-4">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                @Html.Raw(@Model.Content);
+            </div>
+        </div>
+    </div>
+</article>
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/modalpost.js"></script>
 }
