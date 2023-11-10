@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Blog.Helpers;
+using Microsoft.AspNetCore.Identity;
 
 namespace Blog.Controllers
 {
@@ -85,6 +86,7 @@ namespace Blog.Controllers
                     {
                         throw new Exception("Please choose different username and email.");
                     }
+                    //var hashedpassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
                     var user = new User
                     {
                         Email = userDto.Email,
@@ -121,6 +123,9 @@ namespace Blog.Controllers
             {
                 return null;
             }
+            //if(!BCrypt.Net.BCrypt.Verify(password, user.Password)){
+            //    return null;
+            //}
             if (!(password == user.Password))
             {
                 return null;
