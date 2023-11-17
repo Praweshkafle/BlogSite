@@ -76,10 +76,12 @@ function submitBlogPost() {
     });
 }
 
+
+
+
 $(document).ready(function () {
     $("#submitBtn").click(function (e) {
         e.preventDefault();
-        alert("working");
         submitBlogPost();
     });
 });

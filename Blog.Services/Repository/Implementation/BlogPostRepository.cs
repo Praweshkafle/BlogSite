@@ -58,6 +58,17 @@ namespace Blog.Services.Repository.Implementation
             }
         }
 
+        public async Task<IEnumerable<BlogPost>> GetUserPosts(int authorId)
+        {
+            var sql = "SELECT * FROM BlogPosts WHERE AuthorId = @AuthorId";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<BlogPost>(sql, new { AuthorId = authorId });
+                return result.ToList();
+            }
+        }
+
         public Task<int> UpdateAsync(BlogPost entity)
         {
             throw new NotImplementedException();

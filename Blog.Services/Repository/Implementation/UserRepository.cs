@@ -62,6 +62,11 @@ namespace Blog.Services.Repository.Implementation
             }
         }
 
+        public Task<IEnumerable<User>> GetUserPosts(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<int> UpdateAsync(User entity)
         {
             throw new NotImplementedException();
