@@ -85,3 +85,27 @@ $(document).ready(function () {
         submitBlogPost();
     });
 });
+
+
+$(document).ready(function () {
+    $('.edit-button').click(function (e) {
+        e.preventDefault();
+        var modalContainer = $(this).closest('#examplemodal');
+        var post = $(this).closest('.post');
+        var postId = post.find('.post-id').val();
+        var url = "/blog/edit/" + postId;
+        console.log(url);
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function (response) {
+                modalContainer.find('#Title').val(response.Title);
+                modalContainer.find('#Content').val(response.Content);
+                $('#examplemodal').modal('show');
+            },
+            error: function () {
+                alert("Error: An error occurred while making the request.");
+            }
+        });
+    });
+});

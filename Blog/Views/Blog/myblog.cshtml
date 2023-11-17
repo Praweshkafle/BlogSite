@@ -9,7 +9,7 @@
             <div class="col-md-5 col-lg-8 col-xl-7">
                 <div class="site-heading">
                     <h1>My Blogs</h1>
-                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                    <span class="subheading">Every blogs that you have posted</span>
                 </div>
             </div>
         </div>
@@ -27,22 +27,35 @@
                 {
                     <!-- Post preview-->
                     <div class="post-preview">
-                        <a href="/blog/detail/@item.Id">
-                            <h2 class="post-title">@item.Title</h2>
+
+                        <div>
+                            <div class="post d-flex">
+                                <input hidden class="post-id" value="@item.Id" />
+                                <a href="/blog/detail/@item.Id">
+                                    <h2 class="post-title">@item.Title</h2>
+                                </a>
+                                <a id="edit" class="btn btn-md edit-button">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+
                             @if (@item.Content.Length < 30)
                             {
-                                <h3 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content, "<[^>]*(>|$)", string.Empty))</h3>
+                                <h4 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content, "<[^>]*(>|$)", string.Empty))</h4>
                             }
                             else
                             {
-                                <h3 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content.Substring(0,80), "<[^>]*(>|$)", string.Empty))</h3>
+                                <h4 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content.Substring(0,80), "<[^>]*(>|$)", string.Empty))</h4>
                             }
-                        </a>
+
+                        </div>
+
                         <p class="post-meta">
                             Posted by
                             <a href="#!">@item.AuthorName</a>
-                            on @item.PublicationDate.ToString("m");
+                            on @item.PublicationDate.ToString("m")
                         </p>
+
                     </div>
                     <!-- Divider-->
                     <hr class="my-4" />
@@ -55,3 +68,8 @@
 
 
 </div>
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/modalpost.js"></script>
+}

@@ -13,5 +13,7 @@ namespace Core.Common.Repository
         Task<int> AddAsync(T entity);
         Task<int> UpdateAsync(T entity);
         Task<int> DeleteAsync(int id);
+
+        Task<IEnumerable<T>> GetUserPosts(int userId);
     }
 }
