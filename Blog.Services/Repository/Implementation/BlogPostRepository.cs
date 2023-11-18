@@ -69,9 +69,15 @@ namespace Blog.Services.Repository.Implementation
             }
         }
 
-        public Task<int> UpdateAsync(BlogPost entity)
+        public async Task<int> UpdateAsync(BlogPost entity)
         {
-            throw new NotImplementedException();
+            var sql = "UPDATE BlogPosts SET Title = @Title, Content = @Content, AuthorId = @AuthorId, Image = @Image, PublicationDate = @PublicationDate  WHERE Id = @Id";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
         }
     }
 }

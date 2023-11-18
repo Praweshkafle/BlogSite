@@ -31,10 +31,7 @@ namespace Blog.Services.Repository.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CommentDto>> GetUserPosts(int userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public Task<int> UpdateAsync(CommentDto entity)
         {

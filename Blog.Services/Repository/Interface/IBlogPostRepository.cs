@@ -11,5 +11,6 @@ namespace Blog.Services.Repository.Interface
 {
     public interface IBlogPostRepository:IBaseRepository<BlogPost>
     {
+        Task<IEnumerable<BlogPost>> GetUserPosts(int userId);
     }
 }
