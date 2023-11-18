@@ -7,6 +7,7 @@ const openFileButton = document.getElementById('openFileButton');
 const selectedImage = document.getElementById('selectedImage');
 const changeButton = document.getElementById('change');
 const deleteButton = document.getElementById('delete');
+var globalPostId = 0;
 const reader = new FileReader();
 openFileButton.addEventListener('click', () => {
     fileInput.click();
@@ -42,8 +43,9 @@ deleteButton.addEventListener('click', () => {
     deleteButton.style.display = 'none';
 });
 
-function submitBlogPost() {
+function submitBlogPost(id) {
     var data = {
+        Id: globalPostId,
         Title: $('#Title').val(),
         Content: tinymce.get('Content').getContent(),
         Image: '',
@@ -54,7 +56,7 @@ function submitBlogPost() {
     var formData = new FormData();
 
     formData.append("blogPostDto", JSON.stringify(data));
-    formData.append("file", $("#file")[0].files[0]);
+    formData.append("file", $("#file")[0].files[0] ? $("#file")[0].files[0] : null);
 
     $.ajax({
         url: "/blog/create",
@@ -65,6 +67,10 @@ function submitBlogPost() {
         dataType: 'json',
         success: function (response) {
             if (response.success) {
+                $('#Title').val("");
+                tinymce.get("Content").setContent("");
+                init();
+                $('#examplemodal').modal('hide');
                 alert(response.message);
             } else {
                 alert("Error: " + response.message);
@@ -82,7 +88,9 @@ function submitBlogPost() {
 $(document).ready(function () {
     $("#submitBtn").click(function (e) {
         e.preventDefault();
-        submitBlogPost();
+        var post = $(this).closest('.post');
+        var postId = post.find('.post-id').val();
+        submitBlogPost(postId);
     });
 });
 
@@ -90,17 +98,28 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.edit-button').click(function (e) {
         e.preventDefault();
+        $('#Title').val("");
+        tinymce.get("Content").setContent("");
+        globalPostId = 0;
         var modalContainer = $(this).closest('#examplemodal');
         var post = $(this).closest('.post');
         var postId = post.find('.post-id').val();
+        globalPostId = postId;
         var url = "/blog/edit/" + postId;
-        console.log(url);
         $.ajax({
             url: url,
             type: "GET",
             success: function (response) {
-                modalContainer.find('#Title').val(response.Title);
-                modalContainer.find('#Content').val(response.Content);
+                init();
+                if (response.image !== null && response.image !== "") {
+                    selectedImage.src = "/Images/Custom/" + response.image;
+                    selectedImage.style.display = 'block';
+                    openFileButton.style.display = 'none';
+                    changeButton.style.display = 'inline-block';
+                    deleteButton.style.display = 'inline-block';
+                }
+                $('#Title').val(response.title);
+                tinymce.get("Content").setContent(response.content);
                 $('#examplemodal').modal('show');
             },
             error: function () {
@@ -109,3 +128,11 @@ $(document).ready(function () {
         });
     });
 });
+
+function init() {
+    selectedImage.src = "";
+    selectedImage.style.display = 'none';
+    openFileButton.style.display = 'block';
+    changeButton.style.display = 'none';
+    deleteButton.style.display = 'none';
+}

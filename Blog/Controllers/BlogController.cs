@@ -34,8 +34,31 @@ namespace Blog.Controllers
                 if (!string.IsNullOrWhiteSpace(blogPostDto))
                 {
                     string imagePath = "";
-
+                    
                     var blogPost = JsonConvert.DeserializeObject<BlogPostDto>(blogPostDto);
+                    if (blogPost?.Id > 0)
+                    {
+                        if (file != null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(blogPost.Image))
+                            {
+                                _fileManager.deleteImage(blogPost.Image, _fileManager.getPathToImageFolder());
+                            }
+                            var prefix = blogPost.Title;
+                            imagePath = _fileManager.saveImageAndGetFileName(file, prefix);
+                        }
+                        var updateblog = new BlogPost
+                        {
+                            Id=blogPost.Id,
+                            PublicationDate = DateTime.Now,
+                            AuthorId = getLoggedInUserId(),
+                            Content = blogPost.Content,
+                            Title = blogPost.Title,
+                            Image = imagePath,
+                        };
+                        var updateResult = await _blogPostRepository.UpdateAsync(updateblog);
+                        return Json(new { success = true, message = "Post Updated Successfully!!!" });
+                    }
                     if (file != null)
                     {
                         var prefix = blogPost.Title;
@@ -50,7 +73,6 @@ namespace Blog.Controllers
                         Image = imagePath,
                     };
                     var result = await _blogPostRepository.AddAsync(blog);
-                    AlertHelper.setMessage(this, "Post Added Successfully!!!", messageType.success);
                     return Json(new { success = true, message = "Post Added Successfully!!!" });
                 }
             }
