@@ -99,6 +99,7 @@ $(document).ready(function () {
     $('.edit-button').click(function (e) {
         e.preventDefault();
         $('#Title').val("");
+        $("#exampleModalLabel").text("Update Post");
         tinymce.get("Content").setContent("");
         globalPostId = 0;
         var modalContainer = $(this).closest('#examplemodal');
@@ -118,6 +119,7 @@ $(document).ready(function () {
                     changeButton.style.display = 'inline-block';
                     deleteButton.style.display = 'inline-block';
                 }
+                $("#exampleModalLabel").text("Create Post");
                 $('#Title').val(response.title);
                 tinymce.get("Content").setContent(response.content);
                 $('#examplemodal').modal('show');
