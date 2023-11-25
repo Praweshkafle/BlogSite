@@ -1,8 +1,11 @@
 ﻿using Blog.Entities;
 using Blog.Services.Dto;
 using Blog.Services.Repository.Interface;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +14,21 @@ namespace Blog.Services.Repository.Implementation
 {
     public class CommentRepository : ICommentRepository
     {
-        public Task<int> AddAsync(CommentDto entity)
+        private readonly IConfiguration configuration;
+        public CommentRepository(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            this.configuration = configuration;
+        }
+
+        public async Task<int> AddAsync(Comment entity)
+        {
+            var sql = "Insert into Comments (Text,CommentDate,AuthorId,BlogPostId) VALUES (@Text,@CommentDate,@AuthorId,@BlogPostId)";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
         }
 
         public Task<int> DeleteAsync(int id)
@@ -21,19 +36,19 @@ namespace Blog.Services.Repository.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CommentDto>> GetAllAsync()
+        public Task<IEnumerable<Comment>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<CommentDto> GetByIdAsync(int id)
+        public Task<Comment> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
 
        
 
-        public Task<int> UpdateAsync(CommentDto entity)
+        public Task<int> UpdateAsync(Comment entity)
         {
             throw new NotImplementedException();
         }

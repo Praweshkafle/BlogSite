@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Services.Repository.Interface
 {
-    public interface ICommentRepository:IBaseRepository<CommentDto>
+    public interface ICommentRepository:IBaseRepository<Comment>
     {
     }
 }
