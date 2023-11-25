@@ -17,12 +17,42 @@ namespace Blog.Controllers
         private readonly IBlogPostRepository _blogPostRepository;
         private readonly IFileManager _fileManager;
         private readonly IUserRepository _userRepository;
+        private readonly ICommentRepository _commentRepository;
 
-        public BlogController(IBlogPostRepository blogPostRepository, IFileManager fileManager, IUserRepository userRepository)
+        public BlogController(IBlogPostRepository blogPostRepository, IFileManager fileManager, IUserRepository userRepository, ICommentRepository commentRepository)
         {
             _blogPostRepository = blogPostRepository;
             _fileManager = fileManager;
             this._userRepository = userRepository;
+            _commentRepository = commentRepository;
+        }
+        [Route("comment")]
+        [HttpPost]
+        public async Task<IActionResult> comment(CommentDto data)
+        {
+            try
+            {
+                if (data == null)
+                {
+                    return Json(new { success = false, message = "Unable to post comment !!" });
+                }
+                    var comment = new Comment
+                    {
+                        CommentDate = DateTime.Now,
+                        AuthorId = getLoggedInUserId(),
+                        BlogPostId = data.Id,
+                        Text = data.Text,
+                    };
+                    var result = await _commentRepository.AddAsync(comment);
+                   
+                return Json(new { success = true, message = "Post Added Successfully!!!" });
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
         }
 
         [Route("create")]
@@ -34,7 +64,7 @@ namespace Blog.Controllers
                 if (!string.IsNullOrWhiteSpace(blogPostDto))
                 {
                     string imagePath = "";
-                    
+
                     var blogPost = JsonConvert.DeserializeObject<BlogPostDto>(blogPostDto);
                     if (blogPost?.Id > 0)
                     {
@@ -49,7 +79,7 @@ namespace Blog.Controllers
                         }
                         var updateblog = new BlogPost
                         {
-                            Id=blogPost.Id,
+                            Id = blogPost.Id,
                             PublicationDate = DateTime.Now,
                             AuthorId = getLoggedInUserId(),
                             Content = blogPost.Content,
