@@ -20,6 +20,7 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="post-heading">
+                    <input hidden id="blogPostId" value="@Model.Id"/>
                     <h1>@Model.Title</h1>
                     <span class="meta">
                         Posted by
@@ -48,7 +49,7 @@
         <div class="row d-flex justify-content-center">
             <div class="col-md-12 col-lg-10 col-xl-8">
                 <div class="card">
-                    <div class="card-body">
+                   @* <div class="card-body">
                         <div class="d-flex flex-start align-items-center">
                             <img class="rounded-circle shadow-1-strong me-3"
                                  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
@@ -75,7 +76,8 @@
                                 <i class="far fa-comment-dots me-2"></i>
                             </a>
                         </div>
-                    </div>
+                    </div>*@
+
                     <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
                         <div class="d-flex flex-start w-100">
                             <img class="rounded-circle shadow-1-strong me-3"
@@ -87,7 +89,7 @@
                             </div>
                         </div>
                         <div class="float-end mt-2 pt-1">
-                            <button type="button" class="btn btn-primary btn-sm">Post comment</button>
+                            <button type="button" id="postCommentBtn" class="btn btn-primary btn-sm">Post comment</button>
                             <button type="button" class="btn btn-outline-primary btn-sm">Cancel</button>
                         </div>
                     </div>
@@ -99,4 +101,38 @@
 @section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/modalpost.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Assuming you have a button with the id "postCommentBtn"
+            $("#postCommentBtn").click(function () {
+                // Get the comment text from the textarea
+                var commentText = $("#textAreaExample").val();
+                var commentDate = "2023-11-07 14:35:25.697";
+                var blogPostId=$("#blogPostId").val();
+                // Create a CommentDto object with the necessary data
+                var commentdata = {
+                    Id:0,
+                    Text: commentText,
+                    AuthorId:1,
+                    BlogPostId:blogPostId,
+                    CommentDate:commentDate,
+                    // Add other properties like AuthorId, BlogPostId if needed
+                };
+                console.log(commentdata);
+                // Make the AJAX call
+                $.ajax({
+                    type: "POST",
+                    url: "/blog/comment",
+                    data: commentdata, // This will be converted to form data
+                    success: function (response) {
+                        console.log("Comment posted successfully", response);
+                    },
+                    error: function (error) {
+                        console.error("Error posting comment", error);
+                    }
+                });
+            });
+        });
+    </script>
+   
 }
