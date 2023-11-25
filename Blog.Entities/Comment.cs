@@ -18,10 +18,7 @@ namespace Blog.Entities
 
         public int AuthorId { get; set; }
 
-        public virtual User Author { get; set; }
-
         public int BlogPostId { get; set; }
 
-        public virtual BlogPost BlogPost { get; set; }
     }
 }
