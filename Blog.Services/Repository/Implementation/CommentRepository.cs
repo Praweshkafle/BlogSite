@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace Blog.Services.Repository.Implementation
 {
@@ -22,23 +23,35 @@ namespace Blog.Services.Repository.Implementation
 
         public async Task<int> AddAsync(Comment entity)
         {
-            var sql = "Insert into Comments (Text,CommentDate,AuthorId,BlogPostId) VALUES (@Text,@CommentDate,@AuthorId,@BlogPostId)";
+            var sql = "Insert into Comments (Text,CommentDate,AuthorId,BlogPostId) VALUES (@Text,@CommentDate,@AuthorId,@BlogPostId) SELECT CAST(SCOPE_IDENTITY() AS INT);";
             using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
-                var result = await connection.ExecuteAsync(sql, entity);
+                var result = await connection.QuerySingleAsync<int>(sql, entity);
                 return result;
             }
         }
 
-        public Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var sql = "DELETE FROM Comments WHERE Id = @Id";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, new { Id = id });
+                return result;
+            }
         }
 
-        public Task<IEnumerable<Comment>> GetAllAsync()
+        public async Task<IEnumerable<Comment>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var sql = "SELECT * FROM Comments";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QueryAsync<Comment>(sql);
+                return result.ToList();
+            }
         }
 
         public Task<Comment> GetByIdAsync(int id)
@@ -48,9 +61,15 @@ namespace Blog.Services.Repository.Implementation
 
        
 
-        public Task<int> UpdateAsync(Comment entity)
+        public async Task<int> UpdateAsync(Comment entity)
         {
-            throw new NotImplementedException();
+            var sql = "UPDATE Comments SET Text = @Text, CommentDate = @CommentDate, AuthorId = @AuthorId, BlogPostId = @BlogPostId WHERE Id = @Id";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
         }
     }
 }
