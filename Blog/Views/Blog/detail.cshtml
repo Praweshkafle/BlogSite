@@ -3,7 +3,7 @@
 
 
 @{
-    string image ;
+    string image;
     if (string.IsNullOrWhiteSpace(Model.Image))
     {
         image = "/assets/img/post-bg.jpg";
@@ -14,13 +14,13 @@
     }
 }
 
-  <!-- Page Header-->
+<!-- Page Header-->
 <header class="masthead" style="background-image: url('@image')">
     <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="post-heading">
-                    <input hidden id="blogPostId" value="@Model.Id"/>
+                    <input hidden id="blogPostId" value="@Model.Id" />
                     <h1>@Model.Title</h1>
                     <span class="meta">
                         Posted by
@@ -49,40 +49,12 @@
         <div class="row d-flex justify-content-center">
             <div class="col-md-12 col-lg-10 col-xl-8">
                 <div class="card">
-                   @* <div class="card-body">
-                        <div class="d-flex flex-start align-items-center">
-                            <img class="rounded-circle shadow-1-strong me-3"
-                                 src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="60"
-                                 height="60" />
-                            <div>
-                                <h6 class="fw-bold text-primary mb-1">Lily Coleman</h6>
-                                <p class="text-muted small mt-0 mb-1">
-                                    Shared publicly - Jan 2020
-                                </p>
-                            </div>
-                        </div>
-
-                        <p class="mt-3 mb-4 pb-2">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                            quis nostrud exercitation ullamco laboris nisi ut aliquip consequat.
-                        </p>
-
-                        <div class="small d-flex justify-content-start">
-                            <a href="#!" class="d-flex align-items-center me-3">
-                                <i class="far fa-thumbs-up me-2"></i>
-                            </a>
-                            <a href="#!" class="d-flex align-items-center me-3">
-                                <i class="far fa-comment-dots me-2"></i>
-                            </a>
-                        </div>
-                    </div>*@
+                    <div class="card-body" id="commentSection">
+                    </div>
 
                     <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
                         <div class="d-flex flex-start w-100">
-                            <img class="rounded-circle shadow-1-strong me-3"
-                                 src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width="40"
-                                 height="40" />
+
                             <div class="form-outline w-100">
                                 <textarea class="form-control" id="textAreaExample" rows="4"
                                           style="background: #fff;" placeholder="Message"></textarea>
@@ -90,7 +62,7 @@
                         </div>
                         <div class="float-end mt-2 pt-1">
                             <button type="button" id="postCommentBtn" class="btn btn-primary btn-sm">Post comment</button>
-                            <button type="button" class="btn btn-outline-primary btn-sm">Cancel</button>
+                            <button type="button" id="cancle" class="btn btn-outline-primary btn-sm">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -103,36 +75,142 @@
     <script src="~/js/modalpost.js"></script>
     <script>
         $(document).ready(function () {
-            // Assuming you have a button with the id "postCommentBtn"
+            var globalCommentId = 0;
+
+            getcomments();
             $("#postCommentBtn").click(function () {
-                // Get the comment text from the textarea
                 var commentText = $("#textAreaExample").val();
                 var commentDate = "2023-11-07 14:35:25.697";
-                var blogPostId=$("#blogPostId").val();
-                // Create a CommentDto object with the necessary data
+                var blogPostId = $("#blogPostId").val();
                 var commentdata = {
-                    Id:0,
+                    Id: globalCommentId,
                     Text: commentText,
-                    AuthorId:1,
-                    BlogPostId:blogPostId,
-                    CommentDate:commentDate,
-                    // Add other properties like AuthorId, BlogPostId if needed
+                    AuthorId: 1,
+                    BlogPostId: blogPostId,
+                    CommentDate: commentDate,
                 };
-                console.log(commentdata);
-                // Make the AJAX call
+                updateComment(commentdata);
+                window.setInterval(getcomments, 2000);
+                $("#textAreaExample").val("");
+            });
+
+            $("#cancle").click(function () {
+                $("#textAreaExample").val("");
+                globalCommentId=0;
+            });
+
+
+
+            function updateComment(commentdata) {
                 $.ajax({
                     type: "POST",
                     url: "/blog/comment",
-                    data: commentdata, // This will be converted to form data
+                    data: commentdata,
                     success: function (response) {
-                        console.log("Comment posted successfully", response);
+                        if (response.success) {
+                            var htmlString = "";
+                            var comment = JSON.parse(response.data);
+                                htmlString = `
+                                                                                    <div class="d-flex flex-start align-items-center">
+                                                                                        <div>
+                                                                                                            <h6 class="fw-bold text-primary mb-1">`+ comment.Username + `</h6>
+
+                                                                                        </div>
+                                                                                                 <a href="#!" id="edit-button" class="d-flex align-items-center ml-3">
+                                                                                                            <i class="far fa-edit me-2"></i>
+                                                                                                        </a>
+                                                                                    </div>
+
+                                                                                    <p class="mt-3 mb-4 pb-2">
+                                                                                                `+ comment.Text + `
+                                                                                    </p>`;
+                                $("#commentSection").append(htmlString);
+
+                        } else {
+                            alert("something went wrong");
+                        }
+
                     },
                     error: function (error) {
                         console.error("Error posting comment", error);
                     }
                 });
+            }
+            function getcomments() {
+                var PostId = $("#blogPostId").val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/blog/getcomment/' + PostId,
+                    success: function (response) {
+                        if (response.success) {
+                            var htmlString = "";
+                            var comments = JSON.parse(response.data);
+                            comments.forEach(function (res) {
+                                htmlString = htmlString + `<div class="cmt">
+                                                                                <div class="d-flex flex-start align-items-center">
+                                                                                    <div>
+                                                                                                                <input id="commentid" hidden class="comment-id" value="`+ res.Id + `" />
+
+                                                                                                        <input id="blogid" hidden class="blog-id" value="`+ res.BlogPostId + `" />
+                                                                                        <h6 class="fw-bold text-primary mb-1">`+ res.Username + `</h6>
+
+                                                                                    </div>
+                                                                                                                     ${res.isUser ? '<a class="d-flex align-items-center ml-3 edit-comment"><i class="far fa-edit me-2"></i></a> <a class="d-flex align-items-center ml-3 delete-comment"><i class="fa fa-trash me-2"></i></a>' : ''}
+                                                                                </div>
+
+                                                                                <p class="mt-3 mb-4 pb-2 cmtText">
+                                                                                    `+ res.Text + `
+                                                                                </p></div>`;
+                            });
+
+                            $("#commentSection").html(htmlString);
+                        } else {
+                            // Handle error
+                            console.error(response.message);
+                        }
+                    },
+                    error: function (error) {
+                        // Handle error
+                        console.error(error);
+                    }
+                });
+            }
+
+
+            $(document).on('click', '.edit-comment', function (e) {
+                globalCommentId = 0;
+                var post = $(this).closest('.cmt');
+                var commentId = post.find('.comment-id').val();
+                var postid = post.find('.blog-id').val();
+                var comment = post.find('.cmtText').text();
+                console.log(commentId, comment);
+                globalCommentId = commentId;
+                $("#textAreaExample").val(comment.trim());
             });
+            $(document).on('click', '.delete-comment', function (e) {
+                var post = $(this).closest('.cmt');
+                var commentId = post.find('.comment-id').val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/blog/deletecomment/' + commentId,
+                    success: function (response) {
+                        if (response.success) {
+                           console.log("deleted!!");
+                            window.setInterval(getcomments, 2000);
+                        } else {
+                            // Handle error
+                            console.error(response.message);
+                        }
+                    },
+                    error: function (error) {
+                        // Handle error
+                        console.error(error);
+                    }
+                });
+                console.log(commentId);
+            });
+
         });
     </script>
-   
+
 }

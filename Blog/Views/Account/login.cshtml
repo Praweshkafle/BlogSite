@@ -55,6 +55,7 @@
                                     @Html.AntiForgeryToken()
                                     @Html.ValidationSummary(true)
                                     @Html.Partial("message")
+                                    <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
                                     <div class="form-outline mb-2">
                                         @Html.TextBoxFor(a => a.Username, new { @class = "form-control form-control-lg", @required="required"})
                                         @Html.LabelFor(a => a.Username, "User Name", new { @class = "form-label" })
