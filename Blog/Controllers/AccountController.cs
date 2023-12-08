@@ -19,14 +19,15 @@ namespace Blog.Controllers
         }
         [Route("login")]
         [HttpGet]
-        public async Task<IActionResult> login()
+        public async Task<IActionResult> login(string? ReturnUrl = null)
         {
+            ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
 
         [Route("login")]
         [HttpPost]
-        public async Task<IActionResult> login(LoginDto loginDto)
+        public async Task<IActionResult> login(LoginDto loginDto, string? ReturnUrl)
         {
             try
             {
@@ -48,7 +49,14 @@ namespace Blog.Controllers
                     prop.ExpiresUtc = DateTime.UtcNow.AddDays(1);
                     prop.IsPersistent = true;
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, prop);
-                    return Redirect("/");
+                    if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
             }
             catch (Exception ex)

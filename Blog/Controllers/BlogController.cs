@@ -36,16 +36,39 @@ namespace Blog.Controllers
                 {
                     return Json(new { success = false, message = "Unable to post comment !!" });
                 }
-                    var comment = new Comment
+                if (data.Id > 0)
+                {
+
+                    var editCmt = new Comment
                     {
                         CommentDate = DateTime.Now,
                         AuthorId = getLoggedInUserId(),
-                        BlogPostId = data.Id,
+                        BlogPostId = data.BlogPostId,
                         Text = data.Text,
+                        Id = data.Id,
                     };
-                    var result = await _commentRepository.AddAsync(comment);
-                   
-                return Json(new { success = true, message = "Post Added Successfully!!!" });
+                    var editedRes = await _commentRepository.UpdateAsync(editCmt);
+                    return Json(new { success = true, data = new CommentModel() });
+                }
+                var comment = new Comment
+                {
+                    CommentDate = DateTime.Now,
+                    AuthorId = getLoggedInUserId(),
+                    BlogPostId = data.BlogPostId,
+                    Text = data.Text,
+                };
+                var result = await _commentRepository.AddAsync(comment);
+                var user = await _userRepository.GetByIdAsync(comment.AuthorId);
+                var commentModel = new CommentModel
+                {
+                    CommentDate = data.CommentDate,
+                    AuthorId = getLoggedInUserId(),
+                    BlogPostId = data.BlogPostId,
+                    Username = user.Username,
+                    Text = data.Text,
+                    Id = result
+                };
+                return Json(new { success = true, data = commentModel });
             }
             catch (Exception ex)
             {
@@ -54,6 +77,63 @@ namespace Blog.Controllers
             }
 
         }
+
+        [Route("getcomment/{Id}")]
+        [HttpGet]
+        public async Task<IActionResult> getcomment(int Id)
+        {
+            try
+            {
+                if (Id <= 0)
+                {
+                    return Json(new { success = false, message = "Unable to find comment !!" });
+                }
+                var comments = await _commentRepository.GetAllAsync();
+                var commentsAspost = comments.Where(a => a.BlogPostId == Id).ToList();
+                var comentModel = new List<CommentModel>();
+                foreach (var comment in commentsAspost)
+                {
+                    var user = await _userRepository.GetByIdAsync(comment.AuthorId);
+                    comentModel.Add(new CommentModel
+                    {
+                        Id = comment.Id,
+                        AuthorId = comment.AuthorId,
+                        CommentDate = comment.CommentDate,
+                        BlogPostId = comment.BlogPostId,
+                        Username = user.Username.ToString(),
+                        Text = comment.Text,
+                        isUser = getLoggedInUserId() == comment.AuthorId ? true : false
+                    });
+                }
+                return Json(new { success = true, data = JsonConvert.SerializeObject(comentModel) });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error Occured!!" });
+            }
+
+        }
+
+        [Route("deletecomment/{Id}")]
+        [HttpGet]
+        public async Task<IActionResult> deletecomment(int Id)
+        {
+            try
+            {
+                if (Id <= 0)
+                {
+                    return Json(new { success = false, message = "Unable to find comment !!" });
+                }
+                 var result = await _commentRepository.DeleteAsync(Id);
+                return Json(new { success = true, message="Deleted successfully!!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error Occured!!" });
+            }
+
+        }
+
 
         [Route("create")]
         [HttpPost]
