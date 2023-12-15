@@ -3,6 +3,7 @@ using Blog.Services.Repository.Interface;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata;
 
 namespace Blog.Controllers
 {
@@ -34,7 +35,8 @@ namespace Blog.Controllers
                         Content = blog.Content,
                         PublicationDate = blog.PublicationDate,
                         Id = blog.Id,
-                        AuthorName = authname.Username
+                        AuthorName = authname.Username,
+                        Image=blog.Image,
                     }) ;
                 }
                 if (blogPost != null)

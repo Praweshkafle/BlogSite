@@ -40,7 +40,9 @@ namespace Blog.Controllers
                     }
                     var claims = new List<Claim>()
                     {
-                        new Claim(ClaimTypes.NameIdentifier,result.Id.ToString())
+                        new Claim(ClaimTypes.NameIdentifier,result.Id.ToString()),
+                        new Claim("username",result.Username.ToString()),
+
                     };
                     var userIdentity = new ClaimsIdentity(claims, "local");
 
@@ -89,10 +91,17 @@ namespace Blog.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await IsDuplicate(userDto.Username, userDto.Email);
-                    if (result != null)
+                    var duplicateUser = await IsDuplicateUsername(userDto.Username);
+                    if (duplicateUser != null)
                     {
-                        throw new Exception("Please choose different username and email.");
+                        AlertHelper.setMessage(this, "Please choose different username.", messageType.error);
+                        return View();
+                    }
+                    var duplicateEmail = await IsDuplicateEmail(userDto.Email);
+                    if (duplicateEmail != null)
+                    {
+                        AlertHelper.setMessage(this, "Please choose different email.", messageType.error);
+                        return View();
                     }
                     //var hashedpassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
                     var user = new User
@@ -103,6 +112,7 @@ namespace Blog.Controllers
                         Username = userDto.Username,
                     };
                     var add = await _userRepository.AddAsync(user);
+                    AlertHelper.setMessage(this, "User Registered!!", messageType.success);
                     return Redirect("/login");
                 }
             }
@@ -110,18 +120,22 @@ namespace Blog.Controllers
             {
                 AlertHelper.setMessage(this, ex.Message, messageType.error);
             }
+            AlertHelper.setMessage(this, "Error Occured!!", messageType.error);
             return View();
         }
 
-        async Task<User> IsDuplicate(string username, string email)
+        async Task<User> IsDuplicateUsername(string username)
         {
             var user = await _userRepository.GetByUsernameAsync(username);
             if (user == null) return null;
-            if (user?.Username == username || user?.Email == email)
-            {
-                return null;
-            }
             return user;
+        }
+
+        async Task<User> IsDuplicateEmail(string email)
+        {
+            var sameEmailUser = await _userRepository.GetByEmailAsync(email);
+            if (sameEmailUser == null) return null;
+            return sameEmailUser;
         }
 
         async Task<User> ValidateUser(string username, string password)
