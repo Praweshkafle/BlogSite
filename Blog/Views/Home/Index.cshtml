@@ -37,12 +37,50 @@
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
                     <h1>Blog</h1>
-                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                    <span class="subheading">Discover inspiration and stories at blog, where every post sparks creativity and captivates the mind.</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
+
+<div class="row m-4">
+    @{
+        string img = "";
+        foreach (var item in Model.ToList().OrderByDescending(a => a.Id).Take(2))
+        {
+            if (!string.IsNullOrWhiteSpace(item.Image))
+            {
+                img = "/Images/Custom/" + item.Image;
+            }
+            else
+            {
+                img = "https://via.placeholder.com/200x250";
+            }
+            <div class="col-md-6">
+                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <strong class="d-inline-block mb-2 text-primary">Featured</strong>
+                        <h3 class="mb-0">@item.Title</h3>
+                        <div class="mb-1 text-muted">@item.PublicationDate.ToString("MMM dd")</div>
+                        @if (item.Content.Length < 30)
+                        {
+                            <p class="card-text mb-auto">@WebUtility.HtmlDecode(Regex.Replace(item.Content, "<[^>]*(>|$)", string.Empty))</p>
+                        }
+                        else
+                        {
+                            <p class="card-text mb-auto">@WebUtility.HtmlDecode(Regex.Replace(item.Content.Substring(0,80), "<[^>]*(>|$)", string.Empty))</p>
+                        }
+                        <a href="/blog/detail/@item.Id" class="stretched-link">Continue reading</a>
+                    </div>
+                    <div class="col-auto d-none d-lg-block">
+                        <img src="@img" alt="Thumbnail" class="bd-placeholder-img" width="200" height="250">
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
 
 
 <!-- Main Content-->
@@ -87,5 +125,5 @@
 </div>
 @section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="~/js/modalpost.js" ></script>
+    <script src="~/js/modalpost.js"></script>
 }
