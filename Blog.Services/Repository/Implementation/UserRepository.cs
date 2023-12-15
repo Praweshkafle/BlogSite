@@ -40,6 +40,17 @@ namespace Blog.Services.Repository.Implementation
             throw new NotImplementedException();
         }
 
+        public async Task<User> GetByEmailAsync(string email)
+        {
+            var sql = "SELECT * FROM Users WHERE Email = @Email";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
+                return result;
+            }
+        }
+
         public async Task<User> GetByIdAsync(int id)
         {
             var sql = "SELECT * FROM Users WHERE Id = @Id";
@@ -57,7 +68,7 @@ namespace Blog.Services.Repository.Implementation
             using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
             {
                 connection.Open();
-                var result = await connection.QuerySingleOrDefaultAsync<User>(sql, new { Username = username });
+                var result = await connection.QueryFirstOrDefaultAsync<User>(sql, new { Username = username });
                 return result;
             }
         }
