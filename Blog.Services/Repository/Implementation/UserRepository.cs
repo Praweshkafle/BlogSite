@@ -75,9 +75,15 @@ namespace Blog.Services.Repository.Implementation
 
       
 
-        public Task<int> UpdateAsync(User entity)
+        public async Task<int> UpdateAsync(User entity)
         {
-            throw new NotImplementedException();
+            var sql = "UPDATE Users SET Username = @Username, Email = @Email, Password = @Password, ProfilePicture = @ProfilePicture  WHERE Id = @Id";
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.Open();
+                var result = await connection.ExecuteAsync(sql, entity);
+                return result;
+            }
         }
     }
 }

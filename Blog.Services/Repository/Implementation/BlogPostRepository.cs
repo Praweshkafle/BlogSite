@@ -7,8 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace Blog.Services.Repository.Implementation
 {
@@ -31,9 +33,20 @@ namespace Blog.Services.Repository.Implementation
             }
         }
 
-        public Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int Id)
         {
-            throw new NotImplementedException();
+            var query1 = "DELETE FROM Comments WHERE BlogPostId = @Id";
+            var query2 = "DELETE FROM BlogPosts WHERE Id = @Id";
+
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                await connection.ExecuteAsync(query1, new { Id });
+            }
+            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
+            {
+                var result = await connection.ExecuteAsync(query2, new { Id });
+                return result;
+            }
         }
 
         public async Task<IEnumerable<BlogPost>> GetAllAsync()
