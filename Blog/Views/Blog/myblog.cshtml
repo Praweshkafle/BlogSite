@@ -15,7 +15,7 @@
         </div>
     </div>
 </header>
-
+@Html.Partial("message")
 
 <!-- Main Content-->
 <div class="container px-4 px-lg-5">
@@ -36,6 +36,9 @@
                                 </a>
                                 <a id="edit" class="btn btn-md edit-button">
                                     <i class="fas fa-edit"></i>
+                                </a>
+                                <a id="delete" href="/blog/delete/@item.Id" class="btn btn-md delete-button">
+                                    <i class="fas fa-trash"></i>
                                 </a>
                             </div>
 
@@ -61,8 +64,6 @@
                     <hr class="my-4" />
                 }
             }
-            <!-- Pager-->
-            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
         </div>
     </div>
 
