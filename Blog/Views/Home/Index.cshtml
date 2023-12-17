@@ -60,7 +60,7 @@
             <div class="col-md-6">
                 <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-primary">Featured</strong>
+                        <strong class="d-inline-block mb-2 text-primary">Latest</strong>
                         <h3 class="mb-0">@item.Title</h3>
                         <div class="mb-1 text-muted">@item.PublicationDate.ToString("MMM dd")</div>
                         @if (item.Content.Length < 30)
@@ -97,11 +97,11 @@
                             <h2 class="post-title">@item.Title</h2>
                             @if (@item.Content.Length < 30)
                             {
-                                <h3 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content, "<[^>]*(>|$)", string.Empty))</h3>
+                                <h4 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content, "<[^>]*(>|$)", string.Empty))</h4>
                             }
                             else
                             {
-                                <h3 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content.Substring(0,80), "<[^>]*(>|$)", string.Empty))</h3>
+                                <h4 class="post-subtitle">@WebUtility.HtmlDecode(Regex.Replace(item.Content.Substring(0,80), "<[^>]*(>|$)", string.Empty))</h4>
                             }
                         </a>
                         <p class="post-meta">
@@ -114,10 +114,6 @@
                     <hr class="my-4" />
                 }
             }
-
-
-            <!-- Pager-->
-            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts →</a></div>
         </div>
     </div>
 
