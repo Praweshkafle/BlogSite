@@ -88,9 +88,19 @@ function submitBlogPost(id) {
 $(document).ready(function () {
     $("#submitBtn").click(function (e) {
         e.preventDefault();
+        
         var post = $(this).closest('.post');
         var postId = post.find('.post-id').val();
-        submitBlogPost(postId);
+
+        if ($('#Title').val().length <= 0 || tinymce.get('Content').getContent().length<=0) {
+            console.log("invalid");
+            alert("Field is invalid (Empty)");
+        } else {
+            console.log("valid");
+
+            submitBlogPost(postId);
+        }
+
     });
 });
 
