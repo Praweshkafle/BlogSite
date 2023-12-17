@@ -124,8 +124,8 @@ namespace Blog.Controllers
                 {
                     return Json(new { success = false, message = "Unable to find comment !!" });
                 }
-                 var result = await _commentRepository.DeleteAsync(Id);
-                return Json(new { success = true, message="Deleted successfully!!" });
+                var result = await _commentRepository.DeleteAsync(Id);
+                return Json(new { success = true, message = "Deleted successfully!!" });
             }
             catch (Exception ex)
             {
@@ -292,6 +292,32 @@ namespace Blog.Controllers
             {
                 throw;
             }
+
+        }
+
+        [Route("delete/{Id}")]
+        [HttpGet]
+        public async Task<IActionResult> delete(int Id)
+        {
+            try
+            {
+                if (Id <= 0)
+                {
+                    AlertHelper.setMessage(this, "Error occured! id invalid", messageType.error);
+                    return Redirect("/blog/myblog");
+                }
+                var result = await _blogPostRepository.DeleteAsync(Id);
+                if (result > 0)
+                {
+                    AlertHelper.setMessage(this, "Blog deleted Succssfulley!", messageType.success);
+                   return Redirect("/blog/myblog");
+                }
+            }
+            catch (Exception ex)
+            {
+                AlertHelper.setMessage(this, ex.Message, messageType.error);
+            }
+            return Redirect("/blog/myblog");
 
         }
 

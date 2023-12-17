@@ -7,16 +7,54 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Blog.Helpers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly IUserRepository _userRepository;
         public AccountController(IUserRepository userRepository)
         {
             this._userRepository = userRepository;
         }
+
+        [Authorize]
+        [Route("changepassword")]
+        [HttpGet]
+        public async Task<IActionResult> changepassword()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [Route("changepassword")]
+        [HttpPost]
+        public async Task<IActionResult> changepassword(ChangePasswordDto changePasswordDto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    int userId = getLoggedInUserId();
+                    var user = await _userRepository.GetByIdAsync(userId);
+                    if (changePasswordDto.OldPassword == user.Password)
+                    {
+                        user.Password = changePasswordDto.NewPassword;
+                        var result= await _userRepository.UpdateAsync(user);
+                        AlertHelper.setMessage(this, "Password changed Succssfulley!", messageType.success);
+                        return Redirect("/changepassword");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                AlertHelper.setMessage(this, "Error occured", messageType.error);
+            }
+            AlertHelper.setMessage(this, "Model is not valid!!", messageType.error);
+            return View();
+        }
+
         [Route("login")]
         [HttpGet]
         public async Task<IActionResult> login(string? ReturnUrl = null)
