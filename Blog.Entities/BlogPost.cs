@@ -9,7 +9,7 @@ namespace Blog.Entities
 {
     public class BlogPost
     {
-        //h
+        
         public int Id { get; set; }
 
         [Required]
