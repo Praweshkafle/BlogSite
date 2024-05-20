@@ -145,6 +145,7 @@ namespace Blog.Controllers
                 {
                     string imagePath = "";
 
+
                     var blogPost = JsonConvert.DeserializeObject<BlogPostDto>(blogPostDto);
                     if (blogPost?.Id > 0)
                     {
